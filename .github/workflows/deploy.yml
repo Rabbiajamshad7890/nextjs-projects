@@ -55,7 +55,7 @@ jobs:
           # Deploy with rsync
           echo "Deploying files..."
           rsync -avz --progress -e "ssh -p 65002" ./out/ "$HOSTINGER_USER@$HOSTINGER_SERVER:/home/$HOSTINGER_USER/domains/p2pclouds.com/public_html/"
-
+          
           # Verify deployment
           echo "Verifying files on server..."
           ssh -p 65002 "$HOSTINGER_USER@$HOSTINGER_SERVER" "ls -la /home/$HOSTINGER_USER/domains/p2pclouds.com/public_html/"
