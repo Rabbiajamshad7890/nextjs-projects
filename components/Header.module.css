@@ -1,0 +1,179 @@
+/* --- Existing Styles (keep your original styles here) --- */
+
+.header {
+    /* Assuming dark background */
+    background-color: #0b0f20; 
+    color: #fff;
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+}
+
+.logoLink {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: inherit;
+    margin-right: 2rem;
+}
+
+.nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.nav a {
+    color: #ccc;
+    text-decoration: none;
+    padding: 0.5rem 0;
+    transition: color 0.2s;
+}
+
+.nav a:hover {
+    color: #fff;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.corporate {
+    color: #9333ea; /* A purple color for emphasis */
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: 1px solid #9333ea;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.corporate:hover {
+    background-color: #9333ea;
+    color: #fff;
+}
+
+.signup {
+    background-color: #3b82f6; /* Blue button */
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.signup:hover {
+    background-color: #2563eb;
+}
+
+.contact {
+    background-color: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.contact:hover {
+    background-color: #fff;
+    color: #0b0f20;
+}
+
+/* --- New Dropdown Styles for 'Ai Agents' --- */
+
+.dropdown {
+    position: relative;
+    /* Ensure the dropdown container is not a simple link, but a wrapper */
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.dropdownToggle {
+    color: #ccc;
+    text-decoration: none;
+    padding: 0.5rem 0;
+    transition: color 0.2s;
+}
+
+.dropdownToggle:hover {
+    color: #fff;
+}
+
+.dropdownMenu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 100%; /* Position right below the toggle */
+    left: 50%;
+    transform: translateX(-50%); /* Center the dropdown horizontally relative to the toggle */
+    
+    /* Styling based on the screenshot */
+    background-color: #1a202c; /* Darker background for the menu */
+    color: #ccc;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    padding: 1.5rem;
+    min-width: 500px; /* Adjust width to fit two columns */
+    border-radius: 8px;
+    /* Using Flexbox for two-column layout */
+    display: flex;
+    gap: 2rem;
+    
+    /* Transition for smoother appearance */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    visibility: hidden;
+}
+
+/* Show the dropdown on hover */
+.dropdown:hover .dropdownMenu {
+    display: flex; /* Override the initial display: none */
+    opacity: 1;
+    visibility: visible;
+}
+
+.dropdownCol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1; /* Make columns take equal width */
+}
+
+.dropdownItem {
+    color: #ccc;
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+    font-weight: 400;
+    /* Ensure it takes full column width */
+    width: 100%; 
+}
+
+.dropdownItem:hover {
+    background-color: #3b82f6; /* Blue hover background */
+    color: #fff;
+}
