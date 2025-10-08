@@ -1,0 +1,64 @@
+name: Deploy React.js to Hostinger
+
+on:
+  push:
+    branches:
+      - master 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧾 Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20  # Good choice for modern React apps
+
+      - name: 📦 Install Dependencies
+        run: npm ci  # Correct, ensures consistent installs
+
+      - name: 🛠️ out Project
+        run: |
+          echo "outing project..."
+          CI=false npm run build  # Disable CI mode to treat warnings as warnings
+
+      - name: 🚚 Deploy to Hostinger via SSH
+        env:
+          HOSTINGER_SERVER: ${{ secrets.HOSTINGER_SERVER }}  # e.g., 92.113.18.205
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}      # e.g., u521593521
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}    # Must be set in GitHub Secrets
+        run: |
+          echo "Deploying to Hostinger..."
+
+          # Install SSH and rsync
+          sudo apt-get update && sudo apt-get install -y openssh-client rsync
+
+          # Setup SSH
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p 65002 -t rsa "$HOSTINGER_SERVER" >> ~/.ssh/known_hosts
+
+          # Test SSH connection
+          echo "Testing SSH connection..."
+          ssh -p 65002 -o BatchMode=yes "$HOSTINGER_USER@$HOSTINGER_SERVER" "echo Connected successfully" || exit 1
+
+          # List files to deploy
+          echo "Files to deploy from ./out/:"
+          ls -la ./out/
+
+          # Deploy with rsync
+          echo "Deploying files..."
+          rsync -avz --progress -e "ssh -p 65002" ./out/ "$HOSTINGER_USER@$HOSTINGER_SERVER:/home/$HOSTINGER_USER/domains/p2pclouds.com/public_html/"
+
+          # Verify deployment
+          echo "Verifying files on server..."
+          ssh -p 65002 "$HOSTINGER_USER@$HOSTINGER_SERVER" "ls -la /home/$HOSTINGER_USER/domains/p2pclouds.com/public_html/"
+
+          # Clean up
+          rm -f ~/.ssh/id_rsa
