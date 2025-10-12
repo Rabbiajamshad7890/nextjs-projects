@@ -1,17 +1,21 @@
-// app/courses/[course_slug]/page.tsx
+// app/courses/[course_slug]/page.tsx (Server Component)
 
 import React from 'react';
-// Use Next.js Link for client-side navigation
+import { AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
-// Icons for visual appeal
-import { Link as LinkIcon, AlertTriangle } from 'lucide-react';
-
+import CourseClientWrapper from './CourseClientWrapper'; // Imports the client component
 
 // ====================================================================
-// --- DATA
+// --- DATA STRUCTURES (Server Side)
 // ====================================================================
 
-// Define the full structure for a course hub
+interface ExternalCourseCard {
+    title: string;
+    description: string;
+    imageUrl: string;
+    linkUrl: string;
+}
+
 interface CourseHub {
     title: string;
     subPages: {
@@ -21,82 +25,79 @@ interface CourseHub {
     }[];
 }
 
-// Sample Data for course pages based on the new categories
+// --------------------------------------------------------------------
+// COURSE DATA DEFINITIONS (Server Side)
+// --------------------------------------------------------------------
+
+const aiDataScienceExternalCourses: ExternalCourseCard[] = [
+    { title: 'AI Agents & Chatbot Development', description: 'Build sophisticated, conversational AI agents and custom chatbots using the latest models and frameworks.', imageUrl: '/SkAIchat1.png', linkUrl: 'https://skillustad.com/ai-agents-and-chatbot/' },
+    { title: 'Generative AI Masterclass', description: 'Deep dive into Generative AI models (LLMs, Diffusion Models) for content, code, and image creation.', imageUrl: '/SkGenAI2.png', linkUrl: 'https://skillustad.com/generative-ai/' },
+    { title: 'Core Data Science Specialization', description: 'Master data analysis, statistical modeling, and machine learning techniques from scratch.', imageUrl: '/SKDSci3.png', linkUrl: 'https://skillustad.com/data-science/' },
+    { title: 'Software Engineering with AI', description: 'A micro-degree program focusing on integrating AI tools and methodologies into the modern software development lifecycle.', imageUrl: '/SKSE4.png', linkUrl: 'https://skillustad.com/micro-degree-program/software-engineering-with-ai/' },
+];
+
+const cybersecurityExternalCourses: ExternalCourseCard[] = [
+    { title: 'Advanced Certified Ethical Hacking', description: 'Learn penetration testing, vulnerability assessment, and ethical hacking techniques for network and web security.', imageUrl: '/SkACSec1.png', linkUrl: 'https://skillustad.com/ethical-hacking/' },
+    { title: 'Advance Cyber Security Training', description: 'Comprehensive course on defensive security, incident response, and security best practices for enterprises.', imageUrl: '/Skethic2.png', linkUrl: 'https://skillustad.com/advance-cyber-security/' },
+    { title: 'Bug Bounty & Penetration Testing', description: 'Practical training on finding and reporting real-world vulnerabilities for bug bounty programs.', imageUrl: '/SKBugB3.png', linkUrl: 'https://skillustad.com/bug-bounty-penetration-testing/' },
+];
+
+const mobileDevExternalCourses: ExternalCourseCard[] = [
+    { title: 'React Native Development with Expo', description: 'Build cross-platform mobile apps for iOS and Android using JavaScript and the React Native framework.', imageUrl: '/SkMAI1.png', linkUrl: 'https://skillustad.com/react-native-development/' },
+    { title: 'Mobile App Development with AI', description: 'Micro-Degree Program: Integrating AI capabilities like computer vision and ML into mobile applications.', imageUrl: '/SkReact2.png', linkUrl: 'https://skillustad.com/micro-degree-program/mobile-app-with-ai/' },
+    { title: 'Flutter & Dart Fundamentals', description: 'Start your journey with Google’s Flutter framework for beautiful, natively compiled applications.', imageUrl: '/SkFD3.png', linkUrl: 'https://skillustad.com/flutter-dart/' },
+    { title: 'Full Stack Flutter & Dart', description: 'Develop complete mobile apps with a backend, including database integration and state management.', imageUrl: '/SKFULLS4.png', linkUrl: 'https://skillustad.com/full-stack-flutter-dart/' },
+];
+
+const cloudDevOpsExternalCourses: ExternalCourseCard[] = [
+    { title: 'Cloud Computing Essentials', description: 'Foundational knowledge in cloud services (AWS/Azure/GCP), networking, security, and deployment models.', imageUrl: '/Skcloudc1.png', linkUrl: 'https://skillustad.com/cloud-computing/' },
+    { title: 'WordPress Web Development', description: 'Learn to build, customize, and manage professional websites using the world’s most popular CMS.', imageUrl: '/SkWp2b.png', linkUrl: 'https://skillustad.com/wordpress/' },
+    { title: 'DevOps Engineering', description: 'Implement CI/CD, Infrastructure as Code (IaC), containerization (Docker, Kubernetes), and monitoring tools.', imageUrl: '/SKDeng3.png', linkUrl: 'https://skillustad.com/devops-engineering/' },
+];
+
+const fullStackExternalCourses: ExternalCourseCard[] = [
+    { title: 'Full Stack AI Academy', description: 'Master the combination of Full Stack development and AI to build intelligent, cutting-edge applications.', imageUrl: '/SkAIFULLWEB1.png', linkUrl: 'https://skillustad.com/fullstack-ai/' },
+    { title: 'MERN Stack Development', description: 'Build robust, scalable full-stack applications with MongoDB, Express, React, and Node.js.', imageUrl: '/SkDevCourse2.png', linkUrl: 'https://skillustad.com/mernstack/' },
+    { title: 'Full Stack Python with Django', description: 'Accelerate your career as a Full Stack Python Developer using the powerful Django framework.', imageUrl: '/FullStack3.png', linkUrl: 'https://skillustad.com/python-django/' },
+    { title: 'Web Development with AI Micro Degree', description: 'A 4-month intensive program to integrate Web Development skills with cutting-edge AI tools.', imageUrl: '/WEbdAI4.png', linkUrl: 'https://skillustad.com/micro-degree-program/web-development-with-ai/' },
+];
+
 const courseHubData: Record<string, CourseHub> = {
-    'cloud-devops': {
-        title: 'Cloud & DevOps Engineer Certification',
-        subPages: [
-            { title: 'Module 1: Infrastructure as Code (Terraform)', description: 'Automating AWS/Azure infrastructure deployment.', slug: 'iac-terraform' },
-            { title: 'Module 2: Container Orchestration (Kubernetes)', description: 'Scaling and managing containerized applications.', slug: 'k8s-basics' },
-            { title: 'Module 3: Continuous Integration/Deployment (CI/CD)', description: 'Implementing GitOps pipelines with GitHub Actions and Jenkins.', slug: 'cicd-pipelines' },
-            { title: 'Module 4: Observability & Monitoring', description: 'Using Prometheus and Grafana for system health.', slug: 'monitoring' },
-        ],
-    },
-    'ai-data-science': {
-        title: 'AI/ML & Data Science Specialist Track',
-        subPages: [
-            { title: 'Module 1: Python for Data Science (NumPy/Pandas)', description: 'Core libraries for data manipulation and analysis.', slug: 'python-data-prep' },
-            { title: 'Module 2: Deep Learning with TensorFlow/PyTorch', description: 'Building and training neural networks.', slug: 'deep-learning' },
-            { title: 'Module 3: Large Language Model (LLM) Integration', description: 'Working with cutting-edge generative AI models.', slug: 'llm-integration' },
-            { title: 'Module 4: MLOps and Deployment', description: 'Taking models from research to production environment.', slug: 'mlops-deployment' },
-        ],
-    },
-    'full-stack': {
-        title: 'Modern Full Stack Web Development',
-        subPages: [
-            { title: 'Module 1: Advanced React and State Management', description: 'Mastering hooks, context, and Redux/Zustand.', slug: 'react-advanced' },
-            { title: 'Module 2: Backend with Node.js and Express', description: 'Building REST APIs and server-side logic.', slug: 'nodejs-backend' },
-            { title: 'Module 3: Database (SQL & NoSQL) Integration', description: 'Designing schemas and querying databases.', slug: 'db-integration' },
-            { title: 'Module 4: Authentication and Security', description: 'Implementing JWT, OAuth, and securing endpoints.', slug: 'security-auth' },
-        ],
-    },
-    'mobile-dev': {
-        title: 'Mobile App Development Bootcamp',
-        subPages: [
-            { title: 'Module 1: React Native Fundamentals', description: 'Setting up environments and basic component structure.', slug: 'rn-setup' },
-            { title: 'Module 2: Navigation and Platform APIs', description: 'Using React Navigation and accessing native features.', slug: 'rn-navigation' },
-            { title: 'Module 3: State Management and Offline Data', description: 'Handling local state and persistent storage.', slug: 'rn-state' },
-            { title: 'Module 4: Deployment to App and Play Stores', description: 'Building and submitting the final application package.', slug: 'rn-deployment' },
-        ],
-    },
-    'cybersecurity': {
-        title: 'Ethical Hacking and Cybersecurity Fundamentals',
-        subPages: [
-            { title: 'Module 1: Network & OS Security Basics', description: 'Understanding TCP/IP, firewalls, and OS hardening.', slug: 'network-security' },
-            { title: 'Module 2: Web Application Penetration Testing', description: 'OWASP Top 10 vulnerabilities (XSS, SQLi, CSRF).', slug: 'web-pentesting' },
-            { title: 'Module 3: Cryptography and PKI', description: 'In-depth look at encryption, hashing, and digital signatures.', slug: 'cryptography' },
-            { title: 'Module 4: Incident Response and Forensics', description: 'Detecting, analyzing, and responding to security breaches.', slug: 'incident-response' },
-        ],
-    },
-    'blockchain': {
-        title: 'Web3 and Blockchain Development',
-        subPages: [
-            { title: 'Module 1: Blockchain Fundamentals and Architecture', description: 'Consensus mechanisms, ledgers, and tokenomics.', slug: 'blockchain-basics' },
-            { title: 'Module 2: Smart Contract Development (Solidity)', description: 'Writing, compiling, and deploying contracts on Ethereum.', slug: 'solidity-contracts' },
-            { title: 'Module 3: Frontend dApp Interaction (Web3.js/Ethers.js)', description: 'Connecting a web app to a wallet and smart contracts.', slug: 'dapp-frontend' },
-            { title: 'Module 4: Advanced Concepts (NFTs and DeFi)', description: 'Building token standards and decentralized finance primitives.', slug: 'advanced-web3' },
-        ],
-    },
+    'cloud-devops': { title: 'Cloud & DevOps Engineer Certification', subPages: [] },
+    'ai-data-science': { title: 'AI/ML & Data Science Specialist Track', subPages: [] },
+    'full-stack': { title: 'Modern Full Stack Web Development', subPages: [] },
+    'mobile-dev': { title: 'Mobile App Development Bootcamp', subPages: [] },
+    'cybersecurity': { title: 'Ethical Hacking and Cybersecurity Fundamentals', subPages: [] },
 };
 
-// ====================================================================
-// --- STATIC GENERATION
-// ====================================================================
+// Helper function to map slug to its data array
+const getExternalCourses = (slug: string): ExternalCourseCard[] | null => {
+    switch (slug) {
+        case 'ai-data-science':
+            return aiDataScienceExternalCourses;
+        case 'cybersecurity':
+            return cybersecurityExternalCourses;
+        case 'mobile-dev':
+            return mobileDevExternalCourses;
+        case 'cloud-devops':
+            return cloudDevOpsExternalCourses;
+        case 'full-stack':
+            return fullStackExternalCourses;
+        default:
+            return null;
+    }
+};
 
-interface StaticParam {
-    course_slug: string;
-}
+
+// ====================================================================
+// --- STATIC GENERATION (Server-Only Function)
+// ====================================================================
 
 /**
- * REQUIRED for 'output: export'. This function runs at build time 
- * to determine which dynamic paths should be pre-rendered as static HTML files.
- * It uses the keys from the courseHubData object.
+ * Generates all slugs required for static export (SSG/output: 'export').
  */
-export async function generateStaticParams(): Promise<StaticParam[]> {
-    // Get all keys (the slugs) from the courseHubData object
+export async function generateStaticParams() {
     const slugs = Object.keys(courseHubData);
-
-    // Map them to the required format { course_slug: '...' }
     return slugs.map(slug => ({
         course_slug: slug,
     }));
@@ -104,7 +105,7 @@ export async function generateStaticParams(): Promise<StaticParam[]> {
 
 
 // ====================================================================
-// --- PAGE COMPONENT
+// --- PAGE COMPONENT (Server Component)
 // ====================================================================
 
 interface CoursePageProps {
@@ -113,17 +114,16 @@ interface CoursePageProps {
     };
 }
 
-// Note: This component remains a Server Component (no 'use client')
 const CoursePage: React.FC<CoursePageProps> = ({ params }) => {
     const { course_slug } = params;
-    const courseHub = courseHubData[course_slug];
+    const normalized_slug = course_slug.toLowerCase();
 
-    // 404 Handling: If the slug exists in static params but somehow fails data lookup
+    const courseHub = courseHubData[normalized_slug];
+    const externalCourses = getExternalCourses(normalized_slug);
+
+    // 404 Handling (Server-side)
     if (!courseHub) {
-        // In a production App Router build, using notFound() is standard, but here
-        // we use custom UI as the build output is currently relying on custom 404 UI.
-        
-        // Custom 404 UI for better feedback in the Canvas environment
+        // Fallback for notFound() since we can't use Next.js's notFound() here easily
         return (
             <main className="min-h-screen bg-[#0d0617] py-32 px-4 sm:px-6 lg:px-8 text-white text-center">
                 <div className="max-w-xl mx-auto p-10 rounded-xl border-2 border-red-500 bg-red-900/20">
@@ -147,62 +147,13 @@ const CoursePage: React.FC<CoursePageProps> = ({ params }) => {
         );
     }
 
-    // Glowing link/button style (PURPLE/BLUE)
-    const linkClass = `
-    block w-full text-left p-5 rounded-xl
-    bg-[#1a0f2b] border border-purple-700/50
-    hover:bg-gradient-to-r hover:from-blue-800/70 hover:to-purple-800/70
-    transition duration-300 transform hover:scale-[1.02]
-    shadow-xl hover:shadow-purple-500/30
-    text-white
-  `;
-
+    // Pass server-fetched data to the Client Component
     return (
-        <main className="min-h-screen bg-[#0d0617] py-16 px-4 sm:px-6 lg:px-8 text-white">
-            <div className="max-w-5xl mx-auto">
-                <h1 className="text-6xl font-extrabold mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-purple-400">
-                    {courseHub.title}
-                </h1>
-                <p className="text-2xl text-center text-gray-400 mb-12">
-                    This is your comprehensive roadmap to mastery in **{course_slug.replace(/-/g, ' ').toUpperCase()}**.
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {courseHub.subPages.map((page) => (
-                        /* Use Next.js Link component */
-                        <Link
-                            key={page.slug}
-                            href={`/courses/${course_slug}/${page.slug}`}
-                            className={linkClass}
-                        >
-                            {/* IMPORTANT: The Next.js Link component requires exactly one child element. 
-                 This single <div> wrapper groups the <h2> and <p> elements together 
-                 to resolve the TypeScript error 'Expected 1-2 arguments, but got 3.'
-                */}
-                            <div>
-                                <h2 className="text-xl font-semibold mb-1 flex items-center">
-                                    <LinkIcon className="h-5 w-5 text-blue-400 mr-2" /> {page.title}
-                                </h2>
-                                <p className="text-sm text-gray-300 mt-2">{page.description}</p>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-
-                <div className="text-center mt-16">
-                    <LinkIcon className="h-6 w-6 inline-block text-blue-400 mr-2" />
-                    <Link href="/" className={`
-            inline-block px-6 py-3 text-base font-bold rounded-lg shadow-xl
-            bg-gradient-to-r from-purple-600 to-blue-500 text-white
-            hover:from-purple-500 hover:to-blue-400
-            transition duration-300 transform
-            border border-purple-400 border-opacity-50
-          `}>
-                        Back to All Course Categories
-                    </Link>
-                </div>
-            </div>
-        </main>
+        <CourseClientWrapper 
+            courseHub={courseHub} 
+            externalCourses={externalCourses} 
+            course_slug={normalized_slug}
+        />
     );
 };
 

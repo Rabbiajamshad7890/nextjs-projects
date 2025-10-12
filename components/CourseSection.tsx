@@ -1,113 +1,193 @@
+"use client";
 import React from 'react';
-// Removed: import Link from 'next/link';
+import { BookOpen, Zap, ArrowRight, TrendingUp, Cpu, Users, Layers, Cloud } from 'lucide-react'; // Retaining Lucide icons for potential use if we swap out emojis
 
-// Using Lucide icons for a cleaner look, assuming it's available or using placeholders
-// In a real Next.js environment, you would import icons from 'lucide-react'
-interface CourseCardProps {
-  title: string;
-  description: string;
-  slug: string;
-  icon: React.ReactNode; // For a category icon
-}
+// 1. Import the necessary hook from your dedicated theme context file
+// FIX: Adjusting the import path to be relative to the current file with explicit extension.
+import { useTheme } from '../app/Context/ThemeContext'; 
 
 // Data for the main course categories
-const devCourses: CourseCardProps[] = [
-  {
-    title: 'Cloud & DevOps',
-    description: 'Master AWS, Azure, GCP, and automation tools like Kubernetes, Docker, and Terraform.',
-    slug: 'cloud-devops',
-    icon: <span role="img" aria-label="Cloud Icon">☁️</span>,
-  },
-  {
-    title: 'AI/ML & Data Science',
-    description: 'Deep dive into Python, TensorFlow, PyTorch, LLMs, and advanced data visualization techniques.',
-    slug: 'ai-data-science',
-    icon: <span role="img" aria-label="AI/ML Icon">🧠</span>,
-  },
-  {
-    title: 'Full Stack Development',
-    description: 'Build robust web applications using the MERN, MEAN, or Next.js stacks from front to back-end.',
-    slug: 'full-stack',
-    icon: <span role="img" aria-label="Full Stack Icon">💻</span>,
-  },
-  {
-    title: 'Mobile Development',
-    description: 'Develop native and cross-platform apps using React Native, Flutter, and Swift/Kotlin.',
-    slug: 'mobile-dev',
-    icon: <span role="img" aria-label="Mobile Icon">📱</span>,
-  },
-  {
-    title: 'Cybersecurity',
-    description: 'Learn ethical hacking, penetration testing, network security, and secure coding practices.',
-    slug: 'cybersecurity',
-    icon: <span role="img" aria-label="Security Icon">🛡️</span>,
-  },
-  {
-    title: 'Blockchain',
-    description: 'Understand decentralized applications (dApps), smart contracts, and Web3 development (Solidity/Rust).',
-    slug: 'blockchain',
-    icon: <span role="img" aria-label="Blockchain Icon">🔗</span>,
-  },
+const devCourses = [
+    {
+        title: 'Cloud & DevOps',
+        description: 'Master AWS, Azure, GCP, and automation tools like Kubernetes, Docker, and Terraform.',
+        slug: 'cloud-devops',
+        icon: <span role="img" aria-label="Cloud Icon">☁️</span>,
+    },
+    {
+        title: 'AI/ML & Data Science',
+        description: 'Deep dive into Python, TensorFlow, PyTorch, LLMs, and advanced data visualization techniques.',
+        slug: 'ai-data-science',
+        icon: <span role="img" aria-label="AI/ML Icon">🧠</span>,
+    },
+    {
+        title: 'Full Stack Development',
+        description: 'Build robust web applications using the MERN, MEAN, or Next.js stacks from front to back-end.',
+        slug: 'full-stack',
+        icon: <span role="img" aria-label="Full Stack Icon">💻</span>,
+    },
+    {
+        title: 'Mobile Development',
+        description: 'Develop native and cross-platform apps using React Native, Flutter, and Swift/Kotlin.',
+        slug: 'mobile-dev',
+        icon: <span role="img" aria-label="Mobile Icon">📱</span>,
+    },
+    {
+        title: 'Cybersecurity',
+        description: 'Learn ethical hacking, penetration testing, network security, and secure coding practices.',
+        slug: 'cybersecurity',
+        icon: <span role="img" aria-label="Security Icon">🛡️</span>,
+    },
+    // The 'Web3 & Blockchain' course has been removed as requested.
 ];
 
-const CourseCard: React.FC<CourseCardProps> = ({ title, description, slug, icon }) => {
-  // Glowing button class using a subtle gradient and shadow (PURPLE/BLUE)
-  const buttonClass = `
-    mt-4 inline-block px-4 py-2 text-sm font-semibold rounded-lg shadow-lg
-    bg-gradient-to-r from-purple-600 to-blue-500 text-white
-    hover:from-purple-500 hover:to-blue-400
-    transition duration-300 transform hover:scale-[1.03]
-    border border-blue-400 border-opacity-50
-  `;
+interface CourseCardProps {
+    title: string;
+    description: string;
+    slug: string;
+    icon: React.ReactNode;
+}
 
-  return (
-    <div className="bg-[#1a0f2b] p-6 rounded-xl shadow-2xl border border-purple-800/50 hover:border-blue-500/50 transition duration-300">
-      <div className="text-4xl mb-4 text-blue-400">{icon}</div>
-      <h3 className="text-2xl font-bold mb-2 text-white">{title}</h3>
-      <p className="text-gray-300 text-sm">{description}</p>
-      {/* Replaced Link with a tag */}
-      <a href={`/courses/${slug}`} className={buttonClass}>
-        View Course Roadmap →
-      </a>
-    </div>
-  );
+const CourseCard: React.FC<CourseCardProps> = ({ title, description, slug, icon }) => {
+    // 2. Consume the theme state in the Card
+    const { theme } = useTheme();
+
+    // The button remains consistent with the strong gradient style you defined, 
+    // ensuring it pops in both themes.
+    const buttonClass = `
+        mt-4 inline-block px-4 py-2 text-sm font-semibold rounded-lg shadow-lg
+        bg-gradient-to-r from-purple-600 to-blue-500 text-white
+        hover:from-purple-500 hover:to-blue-400
+        transition duration-300 transform hover:scale-[1.03]
+        border border-blue-400 border-opacity-50
+    `;
+
+    // Dynamic classes for the card body
+    const cardBodyClass = theme === 'dark'
+        ? "bg-[#1a0f2b] h-full p-6 rounded-xl shadow-2xl border border-purple-800/50 transition duration-300 hover:border-blue-500/50"
+        : "bg-white h-full p-6 rounded-xl shadow-lg border border-gray-200 transition duration-300 hover:border-indigo-500/50";
+
+    const titleClass = theme === 'dark' ? "text-white" : "text-gray-900";
+    const descriptionClass = theme === 'dark' ? "text-gray-300" : "text-gray-600";
+    const iconClass = theme === 'dark' ? "text-blue-400" : "text-indigo-600";
+
+    return (
+        <div className={cardBodyClass}>
+            <div className={`text-4xl mb-4 ${iconClass}`}>{icon}</div>
+            <h3 className={`text-2xl font-bold mb-2 ${titleClass}`}>{title}</h3>
+            <p className={`text-sm ${descriptionClass}`}>{description}</p>
+            {/* Using an a tag for navigation */}
+            <a href={`/courses/${slug}`} className={buttonClass}>
+                View Roadmap →
+            </a>
+        </div>
+    );
 };
 
-export const CourseSection: React.FC = () => {
-  return (
-    <section className="min-h-screen bg-[#0d0617] py-16 px-4 sm:px-6 lg:px-8 text-white">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-5xl font-extrabold mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-300">
-          Master the Latest Tech with Our Courses
-        </h2>
-        <p className="text-xl text-center text-gray-400 mb-12">
-          Choose a path below and start your journey towards expert-level development.
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {devCourses.map((course) => (
-            <CourseCard key={course.slug} {...course} />
-          ))}
-        </div>
+// Main component implementing the Marquee effect
+const CourseSection: React.FC = () => {
+    // 3. Consume the theme state in the main component
+    const { theme } = useTheme();
 
-        {/* CTA Button */}
-        <div className="text-center mt-16">
-          {/* Replaced Link with a tag */}
-          <a href="/browse-all-courses" className={`
-            ${devCourses.length > 0 ? '' : 'hidden'}
-            inline-block px-8 py-4 text-lg font-bold rounded-xl shadow-2xl
-            bg-gradient-to-r from-blue-500 to-purple-600 text-white
-            hover:from-blue-400 hover:to-purple-500
-            transition duration-500 transform hover:scale-[1.05]
-            border border-blue-300 border-opacity-50
-            animate-pulse
-          `}>
-            Explore All Learning Paths
-          </a>
+    const [isPaused, setIsPaused] = React.useState(false);
+    
+    // Duplicates the list to ensure a seamless transition for the infinite loop
+    const duplicatedCourses = React.useMemo(() => [...devCourses, ...devCourses], []);
+    
+    // Dynamic classes for the main section background and text
+    const sectionBgClass = theme === 'dark'
+        ? "min-h-screen bg-[#0d0617] text-white py-16 font-inter"
+        : "min-h-screen bg-gray-50 text-gray-900 py-16 font-inter";
+
+    const headerTextClass = theme === 'dark' ? "text-gray-400" : "text-gray-600";
+    
+    const marqueeBorderClass = theme === 'dark' 
+        ? "overflow-hidden py-4 border-y border-purple-700/50"
+        : "overflow-hidden py-4 border-y border-indigo-300/50";
+
+    return (
+        <div className={sectionBgClass}>
+            
+            {/* Section Header */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+                {/* Heading restored to the original text */}
+                <h1 className="text-5xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-300 mb-4">
+                    Master the Latest Tech with Our SKILLUSTAD Courses
+                </h1>
+                <p className={`text-xl text-center ${headerTextClass}`}>
+                    Hover over any card to pause the scroll and explore the course details.
+                </p>
+            </div>
+
+            {/* --- Marquee Implementation --- */}
+            
+            {/* Custom Styles for the Marquee Animation */}
+            <style>{`
+                /* 1. Define the Keyframes for continuous horizontal scroll */
+                @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    /* -50% because the data is duplicated, scrolling one full set */
+                    100% { transform: translateX(-50%); } 
+                }
+
+                /* 2. Style the container for the animation */
+                .marquee-container {
+                    display: flex;
+                    width: fit-content;
+                    animation: marquee 50s linear infinite; /* Adjust duration (e.g., 50s) for speed */
+                    will-change: transform; /* Performance optimization */
+                }
+
+                /* 3. Pause functionality on hover */
+                .marquee-container.paused {
+                    animation-play-state: paused;
+                }
+
+                /* 4. Ensure individual cards don't shrink and have correct spacing */
+                .course-card-wrapper {
+                    flex-shrink: 0;
+                    width: 320px; /* Fixed width for card */
+                    padding: 1rem;
+                }
+            `}</style>
+
+            {/* Outer wrapper to clip the content and handle hover for pause */}
+            <div 
+                className={marqueeBorderClass}
+                onMouseEnter={() => setIsPaused(true)}
+                onMouseLeave={() => setIsPaused(false)}
+            >
+                {/* Inner element that receives the animation and pause class */}
+                <div 
+                    className={`marquee-container ${isPaused ? 'paused' : ''}`}
+                >
+                    {duplicatedCourses.map((course, index) => (
+                        <div 
+                            key={index} // Key is unique for the duplicated list
+                            className="course-card-wrapper"
+                        >
+                            <CourseCard {...course} />
+                        </div>
+                    ))}
+                </div>
+            </div>
+            
+            {/* CTA Button is kept below the marquee */}
+            <div className="text-center mt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <a href="/browse-all-courses" className={`
+                    inline-block px-8 py-4 text-lg font-bold rounded-xl shadow-2xl
+                    bg-gradient-to-r from-blue-500 to-purple-600 text-white
+                    hover:from-blue-400 hover:to-purple-500
+                    transition duration-500 transform hover:scale-[1.05]
+                    border border-blue-300 border-opacity-50
+                    animate-pulse
+                `}>
+                    Explore All Learning Paths
+                </a>
+            </div>
+
         </div>
-      </div>
-    </section>
-  );
+    );
 };
 
 export default CourseSection;

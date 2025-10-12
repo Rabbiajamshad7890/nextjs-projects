@@ -11,12 +11,13 @@ import React from 'react'
 
 export default function page() {
   return (
-    <div>
+    <div> 
+      
       <HeroSection />
-      <CourseSection/>
-      <ProductSection/>
-      <CommunitySection/>
-      <DocumentationSection/>
+      <CourseSection />
+      <ProductSection />
+      <CommunitySection />
+      <DocumentationSection />
       <BlogsSection />
       <P2PCloudCTABannerOriginal />
     </div>
