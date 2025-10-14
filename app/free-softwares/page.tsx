@@ -3,15 +3,13 @@ import React, { FC } from 'react';
 import { DownloadCloud, Code, GitBranch, Terminal, ArrowRight, Laptop, Zap, Github } from 'lucide-react';
 
 // ========================================================================
-// --- THEME CONTEXT IMPORT (AS REQUESTED)
-// NOTE: This uses the required external path.
+// --- THEME CONTEXT IMPORT
 // ========================================================================
+// NOTE: Assuming useTheme is defined elsewhere and returns ThemeContextType
 import { useTheme } from '@/app/Context/ThemeContext'; 
 
 // ========================================================================
-// --- TYPE DEFINITIONS (Defined locally for internal type safety)
-// These types are necessary for the component's internal logic to compile, 
-// assuming the external ThemeContext provides this structure.
+// --- TYPE DEFINITIONS
 // ========================================================================
 
 type Theme = 'light' | 'dark';
@@ -21,18 +19,22 @@ interface ThemeContextType {
     toggleTheme: () => void;
 }
 
-
 // ========================================================================
-// 1. DATA STRUCTURE (TypeScript)
+// 1. DATA STRUCTURE (UPDATED for Direct Download Links and Stability)
 // ========================================================================
 
 interface Tool {
     name: string;
     description: string;
     icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-    link: string;
     accentColor: string;
     tag: string;
+    // Structure to hold platform-specific download links
+    downloads: {
+        windows: string;
+        mac: string;
+        linux: string;
+    };
 }
 
 const TOOLS: Tool[] = [
@@ -40,35 +42,68 @@ const TOOLS: Tool[] = [
         name: "Visual Studio Code (VS Code)",
         description: "The lightweight, yet powerful source code editor that runs on your desktop. Essential for web development.",
         icon: Code,
-        link: "https://code.visualstudio.com/download", 
         accentColor: "text-blue-400",
-        tag: "Code Editor"
+        tag: "Code Editor",
+        downloads: {
+            // Direct links for VS Code installers
+            windows: "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64",
+            mac: "https://code.visualstudio.com/sha/download?build=stable&os=darwin",
+            linux: "https://code.visualstudio.com/sha/download?build=stable&os=linux-x64", // Direct .deb or .rpm
+        }
     },
     {
         name: "Git",
         description: "The standard distributed version control system for tracking changes in source code. Mandatory for collaboration.",
         icon: GitBranch,
-        link: "https://git-scm.com/downloads", 
         accentColor: "text-orange-500",
-        tag: "Version Control"
+        tag: "Version Control",
+        downloads: {
+            // Windows link remains the direct installer
+            windows: "https://github.com/git-for-windows/git/releases/download/v2.45.0.windows.1/Git-2.45.0-64-bit.exe",
+            // Updated Mac link to the official downloads page
+            mac: "https://git-scm.com/downloads/mac", 
+            // Updated Linux link to the official downloads page
+            linux: "https://git-scm.com/downloads/linux", 
+        }
     },
     {
         name: "Node.js (LTS)",
         description: "A JavaScript runtime built on Chrome's V8 engine. Required for running modern backend servers and frontend tooling.",
         icon: Terminal,
-        link: "https://nodejs.org/en/download/", 
         accentColor: "text-green-500",
-        tag: "Runtime Environment"
+        tag: "Runtime Environment",
+        downloads: {
+            // Direct links for the latest stable LTS (v20.12.2)
+            windows: "https://nodejs.org/dist/v20.12.2/node-v20.12.2-x64.msi", 
+            mac: "https://nodejs.org/dist/v20.12.2/node-v20.12.2.pkg", 
+            // Direct link for Linux binary tarball
+            linux: "https://nodejs.org/dist/v20.12.2/node-v20.12.2-linux-x64.tar.xz", 
+        }
     },
     {
         name: "GitHub Desktop",
         description: "An open-source Electron-based application to use Git features without the command line. Great for beginners.",
         icon: Github,
-        link: "https://desktop.github.com/", 
         accentColor: "text-purple-400",
-        tag: "GUI Client"
+        tag: "GUI Client",
+        downloads: {
+            // Windows link remains
+            windows: "https://central.github.com/deployments/desktop/desktop/latest/win32",
+            // Updated Mac link as requested
+            mac: "https://download.macupdate.com/app/mac/39062/github-desktop/download",
+            // Updated Linux link to the community client releases page
+            linux: "https://github.com/shiftkey/desktop/releases", 
+        }
     }
 ];
+
+// Define platforms for rendering buttons
+const DOWNLOAD_PLATFORMS: { key: keyof Tool['downloads']; label: string; }[] = [
+    { key: 'windows', label: 'Windows' },
+    { key: 'mac', label: 'Mac' },
+    { key: 'linux', label: 'Linux' },
+];
+
 
 // ========================================================================
 // 2. CHILD COMPONENT (ToolCard)
@@ -101,11 +136,19 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, theme }) => {
             tagBg: 'bg-purple-100/70 text-purple-700 border-purple-300/50',
         };
 
+    // New professional button classes
+    const buttonClasses = theme === 'dark'
+        ? 'bg-gray-900/50 border-gray-700 text-gray-300 hover:bg-gray-800'
+        : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50';
+
+    const buttonIconColor = tool.accentColor; // e.g., 'text-blue-400'
+
+
     return (
         // Apply theme-dependent card classes
         <div className={`group flex flex-col p-6 rounded-2xl border shadow-2xl 
-                         transition duration-500 hover:scale-[1.03]
-                         ${cardBaseClasses.bg} ${cardBaseClasses.hover}`}>
+                             transition duration-500 hover:scale-[1.03]
+                             ${cardBaseClasses.bg} ${cardBaseClasses.hover}`}>
             
             <div className="flex items-center justify-between">
                 {/* Icon & Name */}
@@ -125,19 +168,26 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, theme }) => {
             {/* Description */}
             <p className={`mt-4 ${cardBaseClasses.descColor} flex-grow text-sm`}>{tool.description}</p>
             
-            {/* Download Button (Fixed style for high CTA impact) */}
-            <a 
-                href={tool.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`mt-6 flex items-center justify-center space-x-2 px-4 py-3 rounded-xl font-semibold text-white uppercase tracking-wider text-sm 
-                            bg-gradient-to-r from-purple-600 to-cyan-500 transition duration-300 shadow-lg ${tool.accentColor.replace('text', 'shadow')}-600/50
-                            hover:from-purple-500 hover:to-cyan-400 hover:scale-[1.01]`}
-            >
-                <DownloadCloud className="w-4 h-4" />
-                <span>Download Official Installer</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition duration-200" />
-            </a>
+            {/* Platform-Specific Download Buttons */}
+            <div className="mt-6 grid grid-cols-3 gap-3">
+                {DOWNLOAD_PLATFORMS.map(({ key, label }) => (
+                    <a 
+                        key={key}
+                        href={tool.downloads[key]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex items-center justify-center p-2 rounded-xl font-medium uppercase tracking-wider text-xs border 
+                            transition duration-300 shadow-md whitespace-nowrap 
+                            ${buttonClasses}
+                            // Accent shadow on hover for a professional highlight and scale up
+                            hover:scale-[1.03] hover:shadow-lg ${tool.accentColor.replace('text', 'shadow')}-500/50`}
+                    >
+                        {/* Icon uses the tool's accent color */}
+                        <DownloadCloud className={`w-4 h-4 mr-1 ${buttonIconColor}`} />
+                        <span className="leading-none">{label}</span>
+                    </a>
+                ))}
+            </div>
         </div>
     );
 };

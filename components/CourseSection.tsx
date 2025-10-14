@@ -52,20 +52,19 @@ const CourseCard: React.FC<CourseCardProps> = ({ title, description, slug, icon 
     // 2. Consume the theme state in the Card
     const { theme } = useTheme();
 
-    // The button remains consistent with the strong gradient style you defined, 
-    // ensuring it pops in both themes.
+    // STICKY, COLOR-LESS BUTTON: Simplified button styles and positioned it absolutely/sticky at the bottom.
     const buttonClass = `
-        mt-4 inline-block px-4 py-2 text-sm font-semibold rounded-lg shadow-lg
-        bg-gradient-to-r from-purple-600 to-blue-500 text-white
-        hover:from-purple-500 hover:to-blue-400
-        transition duration-300 transform hover:scale-[1.03]
-        border border-blue-400 border-opacity-50
+        w-full text-center px-4 py-2 text-sm font-semibold rounded-lg
+        transition duration-300 transform hover:scale-[1.01]
+        ${theme === 'dark' 
+            ? 'bg-gray-800 text-white hover:bg-gray-700' 
+            : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}
     `;
 
-    // Dynamic classes for the card body
+    // 🌟 FIX: Use a fixed height (h-[320px]) instead of a minimum height to ensure visual uniformity.
     const cardBodyClass = theme === 'dark'
-        ? "bg-[#1a0f2b] h-full p-6 rounded-xl shadow-2xl border border-purple-800/50 transition duration-300 hover:border-blue-500/50"
-        : "bg-white h-full p-6 rounded-xl shadow-lg border border-gray-200 transition duration-300 hover:border-indigo-500/50";
+        ? "bg-[#1a0f2b] h-[320px] relative flex flex-col justify-between p-6 rounded-xl shadow-2xl border border-purple-800/50 transition duration-300 hover:border-blue-500/50"
+        : "bg-white h-[320px] relative flex flex-col justify-between p-6 rounded-xl shadow-lg border border-gray-200 transition duration-300 hover:border-indigo-500/50";
 
     const titleClass = theme === 'dark' ? "text-white" : "text-gray-900";
     const descriptionClass = theme === 'dark' ? "text-gray-300" : "text-gray-600";
@@ -73,13 +72,21 @@ const CourseCard: React.FC<CourseCardProps> = ({ title, description, slug, icon 
 
     return (
         <div className={cardBodyClass}>
-            <div className={`text-4xl mb-4 ${iconClass}`}>{icon}</div>
-            <h3 className={`text-2xl font-bold mb-2 ${titleClass}`}>{title}</h3>
-            <p className={`text-sm ${descriptionClass}`}>{description}</p>
-            {/* Using an a tag for navigation */}
-            <a href={`/courses/${slug}`} className={buttonClass}>
-                View Roadmap →
-            </a>
+            {/* Main content wrapper - Added pb-16 to reserve space for the absolute button */}
+            <div className="pb-16 flex flex-col h-full"> 
+                <div className={`text-4xl mb-4 ${iconClass}`}>{icon}</div>
+                <h3 className={`text-2xl font-bold mb-2 ${titleClass}`}>{title}</h3>
+                {/* 🌟 FIX: Added flex-grow to the description to push the button wrapper to the bottom */}
+                <p className={`text-sm ${descriptionClass} flex-grow`}>{description}</p>
+            </div>
+            
+            {/* STICKY BUTTON CONTAINER: Absolute positioning at the bottom of the card */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 pt-0">
+                {/* Using an a tag for navigation */}
+                <a href={`/courses/${slug}`} className={buttonClass}>
+                    View Roadmap <ArrowRight className="inline-block w-4 h-4 ml-1" />
+                </a>
+            </div>
         </div>
     );
 };
@@ -172,18 +179,9 @@ const CourseSection: React.FC = () => {
                 </div>
             </div>
             
-            {/* CTA Button is kept below the marquee */}
+            {/* The CTA Button block remains removed */}
             <div className="text-center mt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <a href="/browse-all-courses" className={`
-                    inline-block px-8 py-4 text-lg font-bold rounded-xl shadow-2xl
-                    bg-gradient-to-r from-blue-500 to-purple-600 text-white
-                    hover:from-blue-400 hover:to-purple-500
-                    transition duration-500 transform hover:scale-[1.05]
-                    border border-blue-300 border-opacity-50
-                    animate-pulse
-                `}>
-                    Explore All Learning Paths
-                </a>
+                {/* This block is now empty as the CTA was removed */}
             </div>
 
         </div>

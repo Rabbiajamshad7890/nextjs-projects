@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; 
 import { useTheme } from "../app/Context/ThemeContext";
 
 import Link from "next/link";
@@ -8,32 +8,47 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 // import styles from "./Header.module.css"; 
 
-interface DropdownItem {
+// 1. MODIFIED DropdownItem interface (re-adding href as optional)
+interface NavigationItem {
     label: string;
-    href: string;
+    href?: string; // RE-ADDED: The link destination is now necessary for clickable items
 }
 
-const aiAgentsDropdownItems: DropdownItem[] = [
-    { label: "Courses", href: "/courses" },
-    { label: "Product", href: "/product" },
-    { label: "Blogs", href: "/blogs" },
-    { label: "Community", href: "/community" },
-    { label: "Explore Docs", href: "/explore-docs" },
+// 2. MODIFIED TOP-LEVEL NAVIGATION LINKS (re-adding href for Courses)
+const navItems: NavigationItem[] = [ // Renamed to navItems for clarity
+    // --- THIS ITEM IS NOW CLICKABLE AND LINKS TO THE #courses ID ---
+    { label: "Courses" }, 
+    { label: "Products" },
+    { label: "Blogs" },
+    { label: "Softwares" },
+    { label: "Community" },
+    { label: "Documents" },
 ];
+
 
 const Header: React.FC = () => {
     const { theme, toggleTheme } = useTheme();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-    const col1 = aiAgentsDropdownItems.slice(0, 3);
-    const col2 = aiAgentsDropdownItems.slice(3);
     
-    const headerClasses =
-        theme === "dark"
-            ? "bg-gray-900 text-white shadow-lg"
-            : "bg-white text-gray-900 shadow-md";
+    // FIX 1: State to track if the component has mounted on the client
+    const [isMounted, setIsMounted] = useState(false); 
 
-    const linkClasses = "text-gray-600 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-400 transition-colors font-medium";
+    // FIX 2: Set mounted state only on the client
+    useEffect(() => {
+        setIsMounted(true);
+    }, []); 
+    
+    // FIX 3: Use a stable default (e.g., 'light') for SSR, and apply the actual theme only after mounting
+    const currentTheme = isMounted ? theme : 'light'; 
+
+    const headerClasses =
+        currentTheme === "dark"
+            ? "bg-gray-900 text-white shadow-lg"
+            : "bg-white shadow-md"; 
+
+    // 3. UPDATED LINK/ITEM READABILITY: Removed 'cursor-default' from the general classes.
+    // Cursor handling is now dynamic based on whether 'item.href' exists below.
+    const itemClasses = "hover:text-blue-500 dark:hover:text-blue-400 transition-colors font-medium";
     
     const handleLinkClick = () => {
         setIsMenuOpen(false);
@@ -41,7 +56,8 @@ const Header: React.FC = () => {
 
     return (
         <header
-            className={`${headerClasses} sticky top-0 z-50 transition-colors duration-300 relative`}
+            // FIX 4: Apply the stable SSR classes first, then update to the dynamic classes once mounted
+            className={`${isMounted ? headerClasses : 'bg-white shadow-md'} sticky top-0 z-50 transition-colors duration-300 relative`}
         >
             {/* Main Header Row: Logo, Desktop Nav, CTAs/Toggle */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
@@ -58,6 +74,7 @@ const Header: React.FC = () => {
                             alt="P2P Cloud Logo"
                             width={40}
                             height={40}
+                            sizes="40px"
                         />
                         <span>Home</span>
                     </Link>
@@ -65,94 +82,65 @@ const Header: React.FC = () => {
                     {/* Desktop Navigation: Hidden on small screens */}
                     <nav className="hidden md:flex space-x-6 items-center">
                         
-                        {/* AI Agents Dropdown */}
-                        <div className="relative group flex items-center h-full">
-                            <Link
-                                href="/ai-agents"
-                                className={`${linkClasses} py-2 block flex items-center`}
-                            >
-                                Ai Agents
-                            </Link>
-                            
-                            {/* Dropdown Menu (Desktop) */}
-                            <div
-                                className="absolute hidden group-hover:flex top-full left-0 -translate-x-2 max-w-sm sm:max-w-xl mt-2 p-4 bg-gray-100 dark:bg-gray-800 shadow-xl rounded-lg min-w-[500px] transition-opacity duration-300 opacity-0 group-hover:opacity-100"
-                            >
-                                <div className="flex w-full space-x-6">
-                                    {/* Dropdown Columns */}
-                                    <div className="flex flex-col space-y-2 flex-1">
-                                        {col1.map((item: DropdownItem) => (
-                                            <Link
-                                                key={item.label}
-                                                href={item.href}
-                                                className="text-gray-700 dark:text-gray-300 hover:bg-blue-500 hover:text-white p-2 rounded-md transition-colors"
-                                            >
-                                                {item.label}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                    <div className="flex flex-col space-y-2 flex-1">
-                                        {col2.map((item: DropdownItem) => (
-                                            <Link
-                                                key={item.label}
-                                                href={item.href}
-                                                className="text-gray-700 dark:text-gray-300 hover:bg-blue-500 hover:text-white p-2 rounded-md transition-colors"
-                                            >
-                                                {item.label}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Standard Desktop Nav Links */}
-                        <Link href="/lms" className={linkClasses}>
-                            LMS
-                        </Link>
-                        <Link href="/crm" className={linkClasses}>
-                            CRM
-                        </Link>
-                        <Link href="/about" className={linkClasses}>
-                            About
-                        </Link>
+                        {/* 4. MODIFIED DESKTOP NAV: Use Link if href exists, otherwise use span */}
+                        {navItems.map((item) => (
+                            item.href ? (
+                                <Link 
+                                    key={item.label} 
+                                    href={item.href} 
+                                    className={`${itemClasses} cursor-pointer`}
+                                >
+                                    {item.label}
+                                </Link>
+                            ) : (
+                                <span 
+                                    key={item.label} 
+                                    className={`${itemClasses} cursor-default`}
+                                >
+                                    {item.label}
+                                </span>
+                            )
+                        ))}
+                        
                     </nav>
                 </div>
 
                 {/* Right Section: Toggle, Mobile Button, Desktop CTAs */}
                 <div className="flex items-center space-x-2 sm:space-x-4">
-                    {/* THE THEME TOGGLE BUTTON (Always Visible) */}
-                    <button
-                        onClick={toggleTheme}
-                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none"
-                        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-                    >
-                        {theme === "dark" ? (
-                            // Sun icon (Light mode) 
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6 text-yellow-400"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                        ) : (
-                            // Moon icon (Dark mode) 
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6 text-gray-800"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                            </svg>
-                        )}
-                    </button>
+                    {/* FIX 5: Only render theme-specific elements after mounting */}
+                    {isMounted && (
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none"
+                            aria-label={`Switch to ${currentTheme === "dark" ? "light" : "dark"} mode`}
+                        >
+                            {currentTheme === "dark" ? (
+                                // Sun icon (Light mode) 
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-6 w-6 text-yellow-400"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            ) : (
+                                // Moon icon (Dark mode) 
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-6 w-6 text-gray-800"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                                </svg>
+                            )}
+                        </button>
+                    )}
                     
                     {/* Mobile Menu Toggle Button (Visible on mobile only) */}
                     <button
@@ -195,12 +183,12 @@ const Header: React.FC = () => {
                             Signup
                         </Link>
 
-                        {/* Contact Us Button */}
+                        {/* Contact Us Button - REMOVED text-gray-900 dark:text-white */}
                         <Link
                             href="/contact"
-                            className="bg-transparent border border-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-white font-semibold py-2 px-4 rounded-md transition-colors"
+                            className="bg-transparent border border-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold py-2 px-4 rounded-md transition-colors"
                         >
-                            Contact Us
+                            <span> Contact Us </span>
                         </Link>
                     </div>
                 </div>
@@ -215,19 +203,26 @@ const Header: React.FC = () => {
                     className="md:hidden absolute top-full left-0 w-full bg-inherit shadow-xl p-4 border-t border-gray-700 dark:border-gray-800"
                 >
                     <nav className="flex flex-col space-y-4 pb-4">
-                        {/* Mobile Links */}
-                        <Link onClick={handleLinkClick} href="/ai-agents" className={`${linkClasses} block py-2`}>
-                            Ai Agents
-                        </Link>
-                        <Link onClick={handleLinkClick} href="/lms" className={`${linkClasses} block py-2`}>
-                            LMS
-                        </Link>
-                        <Link onClick={handleLinkClick} href="/crm" className={`${linkClasses} block py-2`}>
-                            CRM
-                        </Link>
-                        <Link onClick={handleLinkClick} href="/about" className={`${linkClasses} block py-2`}>
-                            About
-                        </Link>
+                        {/* 5. MODIFIED MOBILE NAV: Use Link if href exists, otherwise use div. Add onClick to close menu. */}
+                        {navItems.map((item) => (
+                            item.href ? (
+                                <Link
+                                    key={item.label}
+                                    href={item.href}
+                                    onClick={handleLinkClick} // IMPORTANT: Closes the menu on click
+                                    className={`${itemClasses} block py-2 cursor-pointer`}
+                                >
+                                    {item.label}
+                                </Link>
+                            ) : (
+                                <div 
+                                    key={item.label}
+                                    className={`${itemClasses} block py-2 cursor-default`}
+                                >
+                                    {item.label}
+                                </div>
+                            )
+                        ))}
                         
                         {/* Mobile CTAs (Stacked) */}
                         <div className="flex flex-col space-y-3 pt-4 border-t border-gray-600 dark:border-gray-700">
@@ -248,7 +243,7 @@ const Header: React.FC = () => {
                             <Link
                                 onClick={handleLinkClick}
                                 href="/contact"
-                                className="bg-transparent border border-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-semibold py-2 px-4 rounded-md text-center transition-colors"
+                                className="bg-transparent border border-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold py-2 px-4 rounded-md text-center transition-colors"
                             >
                                 Contact Us
                             </Link>

@@ -1,9 +1,10 @@
 "use client";
 import React, { FC } from 'react';
-import { useTheme } from '../app/Context/ThemeContext'; // Correct theme context path
+// Assuming 'useTheme' context hook and provider are available at this path in the project
+import { useTheme } from '../app/Context/ThemeContext';
 
 /**
- * Single-file React application using TypeScript.
+ * Single-file React application using TypeScript/JSX.
  * This component displays a library of technology documentation links.
  */
 
@@ -60,38 +61,38 @@ interface DocCardProps {
     description: string;
     linkUrl: string;
     icon: React.ReactNode;
-    buttonText: string; // New property for custom button text
+    buttonText: string;
 }
 
-// Data for the main documentation cards with official external URLs and new button text
+// Data for the main documentation cards
 const techDocs: DocCardProps[] = [
     {
         title: 'React.js',
         description: 'The library for building user interfaces. Dive into hooks and state management.',
-        linkUrl: 'https://react.dev', // Official React Documentation
+        linkUrl: 'https://react.dev',
         icon: <ReactIcon />,
-        buttonText: 'Read the Docs', // Custom button text
+        buttonText: 'Read the Docs',
     },
     {
         title: 'Next.js',
         description: 'The React Framework for Production. Server-side rendering, routing, and APIs.',
-        linkUrl: 'https://nextjs.org/docs', // Official Next.js Documentation
+        linkUrl: 'https://nextjs.org/docs',
         icon: <NextJsIcon />,
-        buttonText: 'View Documentation', // Custom button text
+        buttonText: 'View Documentation',
     },
     {
         title: 'React Native',
         description: 'Build native mobile apps using React for iOS and Android.',
-        linkUrl: 'https://reactnative.dev/docs/getting-started', // Official React Native Documentation
+        linkUrl: 'https://reactnative.dev/docs/getting-started',
         icon: <ReactNativeIcon />,
-        buttonText: 'Start Mobile Dev', // Custom button text
+        buttonText: 'Start Mobile Dev',
     },
     {
         title: 'Docker',
         description: 'Containerization for developers. Build, ship, and run any app, anywhere.',
-        linkUrl: 'https://docs.docker.com/get-started/', // Official Docker Get Started Guide
+        linkUrl: 'https://docs.docker.com/get-started/',
         icon: <DockerIcon />,
-        buttonText: 'Dive into Containers', // Custom button text
+        buttonText: 'Dive into Containers',
     },
 ];
 
@@ -102,18 +103,20 @@ const techDocs: DocCardProps[] = [
 const DocCard: FC<DocCardProps> = ({ title, description, linkUrl, icon, buttonText }) => {
     const { theme } = useTheme(); // Use theme context for conditional styling
 
-    // Glowing button style using a subtle gradient and shadow
+    // --- Colorless & Theme-Aware Button Style ---
+    // The button is now full-width, has no colored background gradient, and adjusts its border/text color based on theme.
     const buttonClass = `
-        mt-4 inline-block px-4 py-2 text-sm font-semibold rounded-lg shadow-lg
-        bg-gradient-to-r from-purple-600 to-blue-500 text-white
-        hover:from-purple-500 hover:to-blue-400
-        transition duration-300 transform hover:scale-[1.03]
-        border border-purple-400 border-opacity-50
+        mt-6 block w-full text-center px-4 py-3 text-sm font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-[1.01]
+        ${theme === 'dark' 
+            ? 'bg-transparent text-gray-300 border border-gray-600 hover:bg-gray-800' 
+            : 'bg-transparent text-gray-700 border border-gray-300 hover:bg-gray-100'
+        }
     `;
 
-    // Apply conditional classes to the card wrapper
+    // --- Card Style (Added flex-col and h-full for sticky footer) ---
+    // Added h-full and flex-col justify-between to ensure the content stretches and the button is pushed to the bottom.
     const cardClasses = `
-        /* REMOVED: flex-shrink-0 w-72 */ p-6 rounded-xl shadow-2xl transition duration-300
+        p-6 rounded-xl shadow-2xl transition duration-300 h-full flex flex-col
         ${theme === 'dark' 
           ? 'bg-[#1a0f2b] border border-purple-800/50 hover:border-blue-500/50' 
           : 'bg-white border border-gray-200 hover:border-blue-500/50'
@@ -124,13 +127,16 @@ const DocCard: FC<DocCardProps> = ({ title, description, linkUrl, icon, buttonTe
     const descriptionClass = theme === 'dark' ? 'text-gray-300' : 'text-gray-600';
 
     return (
-        // Updated to remove fixed width and allow grid scaling
+        // The card is a flex container with column direction
         <div className={cardClasses}>
-            <div className="text-4xl mb-4 text-blue-400 flex justify-center items-center">{icon}</div>
-            <h3 className={`text-2xl font-bold mb-2 ${titleClass}`}>{title}</h3>
-            <p className={`text-sm ${descriptionClass}`}>{description}</p>
+            {/* Main content wrapper takes up all available space, pushing the button down */}
+            <div className="flex-grow">
+                <div className="text-4xl mb-4 text-blue-400 flex justify-center items-center">{icon}</div>
+                <h3 className={`text-2xl font-bold mb-2 ${titleClass}`}>{title}</h3>
+                <p className={`text-sm ${descriptionClass}`}>{description}</p>
+            </div>
             
-            {/* External link for documentation, opens in a new tab */}
+            {/* External link button, which is pushed to the bottom */}
             <a 
                 href={linkUrl} 
                 target="_blank" 
@@ -145,11 +151,9 @@ const DocCard: FC<DocCardProps> = ({ title, description, linkUrl, icon, buttonTe
 
 export const DocumentationSection: FC = () => {
     const { theme } = useTheme(); // Use theme context for conditional styling
-
-    // Marquee-related CSS and its injection are REMOVED entirely.
     
     // Apply theme-based background and text colors to the main section
-    const sectionClasses = `min-h-screen py-16 px-4 sm:px-6 lg:px-8 font-sans transition-colors duration-500 
+    const sectionClasses = `min-h-screen py-16 px-4 sm:px-6 lg:px-8 font-sans transition-colors duration-500 w-full
         ${theme === 'dark' ? 'bg-[#0d0617] text-white' : 'bg-gray-50 text-gray-900'}
     `;
     
@@ -159,11 +163,8 @@ export const DocumentationSection: FC = () => {
     }`;
         
     return (
-        // Updated to use conditional classes
         <section className={sectionClasses}>
             
-            {/* INJECTED CUSTOM MARQUEE CSS REMOVED */}
-
             <div className="max-w-7xl mx-auto">
                 <h2 className="text-5xl font-extrabold mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-300">
                     Documents Tech Library 
@@ -172,10 +173,11 @@ export const DocumentationSection: FC = () => {
                     Dive into advanced documentation and tutorials for the modern developer.
                 </p>
                 
-                {/* GRID CARD CONTAINER (Replaced marquee-container) */}
+                {/* GRID CARD CONTAINER */}
                 <div className="w-full"> 
                     
-                    {/* Inner container displaying cards in a grid (Replaced marquee flex and space-x-8) */}
+                    {/* Inner container displaying cards in a grid */}
+                    {/* Note: The grid layout ensures all DocCards take the same height (h-full is key for sticky footer) */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 p-4"> 
                         
                         {/* Displaying all unique cards in the grid */}
@@ -186,21 +188,7 @@ export const DocumentationSection: FC = () => {
                     </div>
                 </div>
 
-                {/* CTA Button */}
-                <div className="text-center mt-16">
-                    <button 
-                        onClick={() => console.log('Browsing All Documentation... (Placeholder)')}
-                        className={`
-                            inline-block px-8 py-4 text-lg font-bold rounded-xl shadow-2xl
-                            bg-gradient-to-r from-blue-500 to-purple-600 text-white
-                            hover:from-blue-400 hover:to-purple-500
-                            transition duration-500 transform hover:scale-[1.05]
-                            border border-blue-300 border-opacity-50
-                            animate-pulse
-                        `}>
-                        Browse All Documentation
-                    </button>
-                </div>
+                {/* The "Browse All Documentation" CTA button div has been REMOVED as requested. */}
             </div>
         </section>
     );
@@ -208,6 +196,8 @@ export const DocumentationSection: FC = () => {
 
 // Main App component required for single-file execution
 const App: FC = () => {
+    // Note: In a real environment, this App would need to be wrapped in the ThemeContext Provider 
+    // for the useTheme() hook to function correctly.
     return <DocumentationSection />;
 };
 

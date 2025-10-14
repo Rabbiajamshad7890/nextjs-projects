@@ -1,8 +1,5 @@
 "use client";
 import React, { useState } from 'react';
-
-// 1. Import the necessary hook from your dedicated theme context file
-// FIX: Adjusting path to a common root import structure that often resolves build errors.
 import { useTheme } from '../app/Context/ThemeContext'; 
 
 
@@ -57,13 +54,21 @@ function CommunitySection() {
 
     const headerTextClass = theme === 'dark' ? "text-gray-400" : "text-gray-600";
     const cardBgClass = theme === 'dark' 
-        ? "bg-gray-800 p-6 rounded-xl shadow-2xl transition duration-300 ease-in-out transform hover:scale-[1.03] hover:shadow-indigo-500/50 border border-gray-700 hover:border-indigo-500 text-left"
-        : "bg-white p-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-[1.03] hover:shadow-indigo-500/50 border border-gray-200 hover:border-indigo-500 text-left";
+        ? "bg-gray-800 p-6 rounded-xl shadow-2xl transition duration-300 ease-in-out transform hover:scale-[1.03] hover:shadow-gray-500/50 border border-gray-700 hover:border-gray-500 text-left"
+        : "bg-white p-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-[1.03] hover:shadow-gray-300/50 border border-gray-200 hover:border-gray-400 text-left";
 
     const cardTitleClass = theme === 'dark' ? "text-white" : "text-gray-900";
     const cardDescriptionClass = theme === 'dark' ? "text-gray-300" : "text-gray-600";
+    // Keeping the icon color slightly vibrant for contrast
     const cardIconClass = theme === 'dark' ? "text-purple-400" : "text-indigo-600";
     const navMessageClass = theme === 'dark' ? "text-green-400" : "text-green-600";
+
+    // --- NEW COLORLESS BUTTON CLASSES ---
+
+    // Classes for the button inside the cards
+    const cardButtonClass = theme === 'dark'
+        ? "w-full py-3 px-4 rounded-lg font-semibold transition duration-150 transform hover:translate-y-[-1px] text-white bg-transparent border border-gray-600 hover:bg-gray-700 hover:border-gray-500"
+        : "w-full py-3 px-4 rounded-lg font-semibold transition duration-150 transform hover:translate-y-[-1px] text-gray-800 bg-transparent border border-gray-300 hover:bg-gray-100 hover:border-gray-400";
 
 
     return (
@@ -91,14 +96,10 @@ function CommunitySection() {
                         
                         <p className={cardDescriptionClass + " mb-6"}>{space.description}</p>
                         
-                        {/* Button color changed to purple + blue glowing shades */}
+                        {/* Applying the new colorless card button class */}
                         <button
                             onClick={() => onNavigate(space.slug)}
-                            className="w-full text-white py-3 px-4 rounded-lg font-semibold transition duration-150 transform hover:translate-y-[-2px] 
-                                        bg-gradient-to-r from-blue-500 to-purple-600 
-                                        shadow-xl shadow-blue-500/50 
-                                        hover:from-blue-400 hover:to-purple-500 
-                                        hover:shadow-blue-400/70"
+                            className={cardButtonClass}
                         >
                             See Joining Instructions
                         </button>
@@ -108,17 +109,7 @@ function CommunitySection() {
 
             <div className="mt-16 text-center">
                 
-                {/* Main CTA Button also changed to purple + blue glowing shades */}
-                <button
-                    onClick={() => onNavigate('main-cta')} 
-                    className="inline-block px-10 py-4 text-lg text-white font-bold rounded-full transition duration-300 transform hover:scale-105 
-                                bg-gradient-to-r from-blue-500 to-purple-600 
-                                shadow-2xl shadow-blue-500/50 
-                                hover:from-blue-400 hover:to-purple-500 
-                                hover:shadow-blue-400/70"
-                >
-                    Join the Community Now
-                </button>
+                {/* The main CTA button has been removed here. */}
                 
                 {/* Simple feedback mechanism for navigation */}
                 {lastNavigated && (
@@ -129,7 +120,10 @@ function CommunitySection() {
     );
 }
 
+// FIX: Ensure App component is the default export structure
 export default function App() {
+    // Note: The useTheme context hook is assumed to be provided higher up in the application
+    // structure for this component to run correctly.
     return (
         <>
             <CommunitySection />
