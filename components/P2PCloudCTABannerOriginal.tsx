@@ -1,5 +1,5 @@
 "use client"
-import React, { FC } from 'react';
+// import React, { FC } from 'react';
 // Re-enabling the real external theme hook import as requested
 import { useTheme } from '../app/Context/ThemeContext';
 

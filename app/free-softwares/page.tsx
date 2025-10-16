@@ -1,6 +1,6 @@
 "use client";
-import React, { FC } from 'react';
-import { DownloadCloud, Code, GitBranch, Terminal, ArrowRight, Laptop, Zap, Github } from 'lucide-react';
+// import React, { FC } from 'react';
+import { DownloadCloud, Code, GitBranch, Terminal, Laptop, Zap, Github } from 'lucide-react';
 
 // ========================================================================
 // --- THEME CONTEXT IMPORT

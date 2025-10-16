@@ -1,7 +1,6 @@
 "use client";
-import React, { FC } from "react";
+import React from "react";
 // 🛑 IMPORT FOR EXTERNAL THEME CONTEXT 🛑
-// This is the line that must be active in your local project:
 import { useTheme } from '../app/Context/ThemeContext'; 
 import {
     Zap, 
@@ -13,33 +12,12 @@ import {
 const accentColorClass = "text-cyan-400";
 const INSTITUTE_NAME = "P2PClouds Institute";
 
-// --- Theme Context Definition & MOCK Implementation ---
+// --- Theme Context Definition ---
 type Theme = 'light' | 'dark';
 interface ThemeContextType {
     theme: Theme;
     toggleTheme: () => void;
 }
-
-/**
- * 🛑🛑🛑 IMPORTANT: MOCK FUNCTION FOR SANDBOX COMPILATION 🛑🛑🛑
- * * This entire function block is a stub created ONLY to prevent the component 
- * from failing to compile in this specific environment (due to the unresolved 
- * path: '../app/Context/ThemeContext').
- * * YOU MUST DELETE THIS MOCK FUNCTION WHEN YOU PASTE THIS CODE 
- * INTO YOUR LOCAL PROJECT, as it conflicts with the real 'useTheme' import.
- */
-if (false) {
-    // This wrapper ensures TypeScript ignores the block contents during compilation
-    // but keeps the code available for inspection.
-    const useTheme = (): ThemeContextType => {
-        return {
-            theme: 'light', // Default theme for display purposes here
-            toggleTheme: () => {} 
-        };
-    };
-}
-// --- END MOCK FUNCTION ---
-
 
 // --- Data Structures ---
 interface BlogPost {
@@ -83,9 +61,7 @@ const blogPosts: BlogPost[] = [
 ];
 
 const BlogsSection: React.FC = () => {
-    // 1. Get the current theme state from the external context (or the mock above)
-    // NOTE: We must use a type assertion here because the compiler cannot confirm 
-    // the return type of the actual external useTheme, only the mocked one.
+    // 1. Get the current theme state (now correctly using the imported hook)
     const { theme } = useTheme() as ThemeContextType; 
 
     // 2. Define conditional classes based on theme

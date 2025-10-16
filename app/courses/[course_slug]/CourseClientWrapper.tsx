@@ -1,16 +1,13 @@
-// app/courses/[course_slug]/CourseClientWrapper.tsx (Client Component)
-
-"use client"; // REQUIRED: This enables the use of hooks like useTheme()
+"use client";
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // FIX 1: Import the Next.js Image component
 import { Link as LinkIcon } from 'lucide-react';
-// Import the theme hook
 import { useTheme } from '../../Context/ThemeContext'; 
 
-
 // ====================================================================
-// --- TYPES (Copied from the server file for TypeScript consistency)
+// --- TYPES
 // ====================================================================
 
 interface ExternalCourseCard {
@@ -30,7 +27,7 @@ interface CourseHub {
 }
 
 interface ThemeContextType {
-  theme: "light" | "dark";
+    theme: "light" | "dark";
 }
 
 interface CourseClientWrapperProps {
@@ -38,7 +35,6 @@ interface CourseClientWrapperProps {
     externalCourses: ExternalCourseCard[] | null;
     course_slug: string;
 }
-
 
 // ====================================================================
 // --- EXTERNAL COURSE CARD COMPONENT (Theme-Aware)
@@ -81,10 +77,13 @@ const ExternalCourseCardComponent: React.FC<{ card: ExternalCourseCard; theme: "
             `}
         >
             <div className="relative h-48 w-full overflow-hidden shrink-0">
-                <img
+                {/* FIX 2: Replaced <img> with Next.js <Image /> component for optimization */}
+                <Image
                     src={card.imageUrl}
                     alt={card.title}
-                    className="w-full h-full object-cover transition-opacity duration-300 opacity-80 group-hover:opacity-100"
+                    fill // Use 'fill' to make it cover the parent <div> which has a defined height (h-48)
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-opacity duration-300 opacity-80 group-hover:opacity-100"
                 />
             </div>
             <div className="p-5 flex flex-col flex-grow">
@@ -99,7 +98,6 @@ const ExternalCourseCardComponent: React.FC<{ card: ExternalCourseCard; theme: "
         </a>
     );
 };
-
 
 // ====================================================================
 // --- CLIENT WRAPPER COMPONENT

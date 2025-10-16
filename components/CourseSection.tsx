@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { BookOpen, Zap, ArrowRight, TrendingUp, Cpu, Users, Layers, Cloud } from 'lucide-react'; // Retaining Lucide icons for potential use if we swap out emojis
+import {  ArrowRight  } from 'lucide-react'; // Retaining Lucide icons for potential use if we swap out emojis
 
 // 1. Import the necessary hook from your dedicated theme context file
 // FIX: Adjusting the import path to be relative to the current file with explicit extension.

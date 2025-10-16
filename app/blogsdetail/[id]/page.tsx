@@ -2,19 +2,14 @@
 // This is the Server Component (default in Next.js App Router)
 
 import React from 'react';
-// We still need to import Lucide icons here, but only for referencing their string names
-import {
-  // Note: We only use the icon name string, not the component itself in the data structure
-  FileText,
-} from "lucide-react";
 // Import the Client Component from its dedicated file in the same directory.
 import BlogDetailWrapper from '@/app/blogsdetail/[id]/BlogsDetailWrapper';
-
 
 // --- Configuration & Data Structures (Local to the server component) ---
 const INSTITUTE_NAME = "P2PClouds Institute";
 
-interface BlogPost {
+// EXPORTING interfaces allows the Client Component to reliably use the same types.
+export interface BlogPost {
   id: number;
   title: string;
   category: string;
@@ -23,6 +18,15 @@ interface BlogPost {
   content: string;
   // Icon type remains string for serialization
   icon: string; 
+}
+
+/**
+ * Interface defining the props expected by the Client Component (BlogDetailWrapper).
+ */
+export interface BlogDetailWrapperProps {
+    post: BlogPost | undefined;
+    blogId: string;
+    instituteName: string;
 }
 
 // Full Blog Posts Data (Remains here for data fetching/static generation)
@@ -134,9 +138,16 @@ const BlogDetailPage: React.FC<BlogDetailPageProps> = ({ params }) => {
   const postId = parseInt(blogId, 10); 
   const post = FULL_BLOG_POSTS.find(p => p.id === postId);
 
-  // Pass necessary props to the client component.
+  // Explicitly type the props object for type safety when calling the Client Component
+  const props: BlogDetailWrapperProps = {
+    post: post,
+    blogId: blogId,
+    instituteName: INSTITUTE_NAME,
+  };
+
+  // Pass necessary props to the client component using the typed object.
   return (
-    <BlogDetailWrapper post={post} blogId={blogId} instituteName={INSTITUTE_NAME} />
+    <BlogDetailWrapper {...props} />
   );
 };
 

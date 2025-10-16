@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-// import Link from 'next/link'; // REMOVED to fix compilation error. Using <a> tags instead.
+import Image from 'next/image'; // FIX 1: Import the Next.js Image component
 import {
     MapPin,
     Mail,
@@ -15,7 +15,6 @@ import {
     Youtube
     // END: Icon Fix
 } from 'lucide-react';
-// FIX: Restoring the actual import for the external theme context
 import { useTheme } from '../app/Context/ThemeContext';
 
 // --- Type Definitions ---
@@ -68,18 +67,14 @@ const CompanyLogo: React.FC<{ theme: Theme }> = ({ theme }) => {
     const textColor = theme === 'dark' ? 'text-white' : 'text-gray-900';
     return (
         <div className="flex items-center space-x-2">
-            {/* Image path "favicon.png" correctly references the static asset */}
-            <img 
-                src="favicon.png" 
+            {/* FIX 2: Replaced <img> with Next.js <Image /> component for optimization */}
+            <Image 
+                src="/favicon.png" // The path must start with / for Next.js static assets
                 alt="P2P Clouds Logo" 
+                width={32} // Required width
+                height={32} // Required height
                 className="w-8 h-8 rounded-full object-cover shadow-lg" 
-                // Fallback placeholder in case the image doesn't load
-                onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.onerror = null; // Prevents infinite loop
-                    target.src = "https://placehold.co/32x32/06B6D4/FFFFFF?text=C"; 
-                    target.className = "w-8 h-8 rounded-full object-cover p-1 bg-cyan-500 shadow-lg";
-                }}
+                // Removed the onError fallback since <Image> handles loading/errors better
             />
             <span className={`text-xl font-extrabold tracking-wider ${textColor}`}>
                 P2P CLOUDS
@@ -232,7 +227,7 @@ const Footer: React.FC = () => {
                         <ul className="space-y-4">
                             {productLinks.map((link) => (
                                 <li key={link.name}>
-                                    {/* Replacing Next.js Link with standard <a> tag */}
+                                    {/* Using standard <a> tag */}
                                     <a
                                         href={link.href}
                                         className="text-sm hover:text-cyan-500 transition-colors block"
@@ -254,11 +249,11 @@ const Footer: React.FC = () => {
                         &copy; {currentYear} P2P Clouds. All rights reserved.
                     </p>
                     <div className="flex space-x-6 order-1 md:order-2">
-                        {/* Replacing Next.js Link with standard <a> tag */}
+                        {/* Using standard <a> tag */}
                         <a href="#support" className="hover:text-cyan-500 transition-colors">
                             Support
                         </a>
-                        {/* Replacing Next.js Link with standard <a> tag */}
+                        {/* Using standard <a> tag */}
                         <a href="#blogs" className="hover:text-cyan-500 transition-colors">
                             Blogs
                         </a>

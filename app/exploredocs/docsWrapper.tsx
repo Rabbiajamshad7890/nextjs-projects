@@ -116,7 +116,7 @@ export default function DocsWrapper() {
   return (
     // Applied the theme-dependent container class to the main wrapper
     <div className={`${cardClasses.container}`}>
-      
+      <h1 className="text-3xl font-extrabold mb-8">Documentation & Resources</h1>
       
       {/* The wide grid layout is preserved: lg:grid-cols-2 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">

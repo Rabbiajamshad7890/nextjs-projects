@@ -1,7 +1,7 @@
 // app/all-courses/page.tsx
 "use client";
 import React from 'react';
-import { LayoutGrid, BookOpen, Home } from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
 // Assuming the path to ThemeContext remains correct from the root (i.e., using @/app)
 import { useTheme } from '@/app/Context/ThemeContext'; 
 import Link from 'next/link';
