@@ -69,7 +69,7 @@ const CompanyLogo: React.FC<{ theme: Theme }> = ({ theme }) => {
         <div className="flex items-center space-x-2">
             {/* FIX 2: Replaced <img> with Next.js <Image /> component for optimization */}
             <Image 
-                src="/favicon.png" // The path must start with / for Next.js static assets
+                src="/logo.png" // The path must start with / for Next.js static assets
                 alt="P2P Clouds Logo" 
                 width={32} // Required width
                 height={32} // Required height

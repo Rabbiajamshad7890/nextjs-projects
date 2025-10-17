@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://p2pclouds.com
+
+# Sitemaps
+Sitemap: https://p2pclouds.com/sitemap.xml

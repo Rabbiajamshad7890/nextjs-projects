@@ -64,13 +64,15 @@ const Header: React.FC = () => {
                 
                 {/* Left Section: Logo + Links */}
                 <div className="flex items-center space-x-8">
+                  
+
                     <Link
                         href="/"
                         className="flex items-center space-x-2 text-xl font-bold transition-colors"
                         onClick={handleLinkClick}
                     >
                         <Image
-                            src="/favicon.png"
+                            src="/logo.png"
                             alt="P2P Cloud Logo"
                             width={40}
                             height={40}
