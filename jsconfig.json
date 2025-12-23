@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      // This tells Next.js that '@/...' refers to './src/...'
+      "@/*": ["./*"] 
+    }
+  }
+}
